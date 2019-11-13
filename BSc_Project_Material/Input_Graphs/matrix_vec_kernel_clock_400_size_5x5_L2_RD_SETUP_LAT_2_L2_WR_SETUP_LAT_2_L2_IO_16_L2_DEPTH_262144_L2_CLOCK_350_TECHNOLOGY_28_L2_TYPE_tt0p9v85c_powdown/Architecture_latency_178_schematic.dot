@@ -1,0 +1,29 @@
+digraph G{
+	add_0[label="add_0";shape=rectangle];
+	add_1[label="add_1";shape=rectangle];
+	add_2[label="add_2";shape=rectangle];
+	add_3[label="add_3";shape=rectangle];
+	mul_0[label="mul_0";shape=rectangle];
+	load_0[label="load_0";shape=rectangle];
+	store_0[label="store_0";shape=rectangle];
+	store_1[label="store_1";shape=rectangle];
+	store_2[label="store_2";shape=rectangle];
+	store_3[label="store_3";shape=rectangle];
+add_0->add_0;
+add_0->add_1;
+add_0->add_2;
+add_0->store_0;
+add_1->add_0;
+add_1->add_2;
+add_1->store_3;
+add_2->add_2;
+add_2->add_3;
+add_2->store_1;
+add_2->store_2;
+add_3->store_2;
+load_0->mul_0;
+mul_0->add_0;
+mul_0->add_1;
+mul_0->add_2;
+mul_0->add_3;
+}

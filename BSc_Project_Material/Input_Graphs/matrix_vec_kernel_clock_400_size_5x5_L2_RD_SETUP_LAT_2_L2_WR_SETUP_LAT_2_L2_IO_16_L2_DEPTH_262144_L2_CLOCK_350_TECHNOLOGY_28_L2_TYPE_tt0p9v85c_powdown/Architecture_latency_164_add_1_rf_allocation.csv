@@ -1,0 +1,9 @@
+Reg_Address,Instruction
+0,(21) mul6.1.1
+1,(30) mul6.4.1
+1,(80) add.sup.0
+2,(89) add.sup.9
+3,(11) mul6.3
+4,(14) mul6.4
+5,(81) add.sup.1
+6,(88) add.sup.8

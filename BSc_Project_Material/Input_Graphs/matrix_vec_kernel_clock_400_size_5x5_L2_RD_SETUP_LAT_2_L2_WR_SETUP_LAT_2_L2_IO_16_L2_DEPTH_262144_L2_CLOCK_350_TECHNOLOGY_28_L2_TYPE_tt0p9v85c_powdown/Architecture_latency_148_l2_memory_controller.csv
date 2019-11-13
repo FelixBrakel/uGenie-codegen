@@ -1,0 +1,4 @@
+Clock,OpType,StartAddress,LastAddress,Latency,Energy
+0,read,0,29,139,3216.790296
+139,idle,0,0,11,171.490680
+150,write,30,34,24,598.949496
