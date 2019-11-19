@@ -152,3 +152,6 @@ fabric.properties
 !*.elf
 !*.bmm
 !*.xmp
+
+# venv
+venv
