@@ -154,3 +154,5 @@ fabric.properties
 !*.xmp
 __pycache__/
 
+# venv
+venv
