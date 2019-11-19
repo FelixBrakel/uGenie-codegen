@@ -152,3 +152,5 @@ fabric.properties
 !*.elf
 !*.bmm
 !*.xmp
+__pycache__/
+

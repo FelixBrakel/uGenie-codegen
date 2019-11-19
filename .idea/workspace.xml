@@ -1,7 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="22f5eb8e-f154-458a-b391-361beaaa9f96" name="Default Changelist" comment="" />
+    <list default="true" id="22f5eb8e-f154-458a-b391-361beaaa9f96" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/webtalk.jou" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/webtalk.jou" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/webtalk_16685.backup.jou" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/work.FU_template_tb.wdb" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/work.FU_template_tb.wdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/webtalk/.xsim_webtallk.info" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/webtalk/.xsim_webtallk.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/webtalk/usage_statistics_ext_xsim.html" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/webtalk/usage_statistics_ext_xsim.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/webtalk/usage_statistics_ext_xsim.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/webtalk/usage_statistics_ext_xsim.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/xsim.dbg" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/xsim.dbg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/xsim.mem" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/xsim.mem" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/xsim.rtti" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/xsim.rtti" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/xsim.type" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/xsim.type" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/xsim.xdbg" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work.FU_template_tb/xsim.xdbg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/fu.vdb" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/fu.vdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/fu_instruction_memory_tb.vdb" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/fu_instruction_memory_tb.vdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/fu_register_file_tb.vdb" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/fu_register_file_tb.vdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/fu_template_mul_tb.vdb" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/fu_template_mul_tb.vdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/fu_template_tb.vdb" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/fu_template_tb.vdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/instruction_memory.vdb" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/instruction_memory.vdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/register_file.vdb" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/register_file.vdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/register_file_v2.vdb" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.dir/work/register_file_v2.vdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.jou" beforeDir="false" afterPath="$PROJECT_DIR$/BSc_Project_Material/vhdl/build/xsim.jou" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bachelor_Thesis.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Bachelor_Thesis.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dotfiles/Architecture_latency_146_schematic.dot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dotfiles/Architecture_latency_147.dot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dotfiles/Architecture_latency_147_schematic.dot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,20 +44,33 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="udbbuyuv" />
   </component>
   <component name="ProjectId" id="1T9KA6Fo4CQQoNRfOfMS7r2gwms" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/dotfiles" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="/usr/bin/node" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.26895732" />
     <property name="project.structure.side.proportion" value="0.41505376" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.CommitDialog" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/dotfiles" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -89,13 +131,34 @@
       <workItem from="1573054452801" duration="2761000" />
       <workItem from="1573469453079" duration="4764000" />
       <workItem from="1573485671151" duration="6681000" />
+      <workItem from="1573683237685" duration="3192000" />
+      <workItem from="1573738070574" duration="5032000" />
+      <workItem from="1573838346145" duration="5618000" />
+      <workItem from="1573844232252" duration="703000" />
+      <workItem from="1574009943998" duration="25202000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.vhd" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Bachelor_Thesis$test.coverage" NAME="test Coverage Results" MODIFIED="1573587023345" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Bachelor_Thesis$test.coverage" NAME="test Coverage Results" MODIFIED="1574089205756" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
