@@ -1,4 +1,5 @@
 from typing import Union
+from enum import Enum
 
 
 class OPInput:
@@ -16,43 +17,45 @@ class RFInput:
     pass
 
 
-class ATAdefinition:
-    pass
-
-
-class ATALoad(ATAdefinition):
-    addr0: int
-    addr1: int
+class ATAInstruction:
     cycle: int
 
-    def __init__(self, addr0, addr1, cycle):
-        self.addr0 = addr0
-        self.addr1 = addr1
+    def __lt__(self, other):
+        return self.cycle < other.cycle
+
+
+class ATAFetch(ATAInstruction):
+    class REG(Enum):
+        REG0 = 0
+        REG1 = 1
+
+    addr: int
+    reg: REG
+
+    def __init__(self, addr: int, reg: REG, cycle: int):
+        self.addr = addr
+        self.reg = reg
         self.cycle = cycle
 
 
-class ATAStore(ATAdefinition):
-    input1: Union[FUinput, OPInput]
-    input2: Union[FUinput, OPInput]
-    addr0: int
-    addr1: int
-    cycle: int
+class ATAStore(ATAInstruction):
+    input: Union[FUinput, OPInput]
+    addr: int
 
     def __init__(self,
-                 input1: Union[FUinput, OPInput], input2: Union[FUinput, OPInput],
-                 addr0: int, addr1: int,
+                 inp: Union[FUinput, OPInput],
+                 addr: int,
                  cycle: int):
-        self.input1 = input1
-        self.input2 = input2
-        self.addr0 = addr0
-        self.addr1 = addr1
+        self.input = inp
+        self.addr = addr
         self.cycle = cycle
 
 
-class ATAOp(ATAdefinition):
+class ATAOp(ATAInstruction):
+    input0: Union[FUinput, OPInput, RFInput]
     input1: Union[FUinput, OPInput, RFInput]
-    input2: Union[FUinput, OPInput, RFInput]
 
-    def __init__(self, input1, input2):
+    def __init__(self, input0: Union[FUinput, OPInput, RFInput], input1: Union[FUinput, OPInput, RFInput], cycle: int):
+        self.input0 = input0
         self.input1 = input1
-        self.input2 = input2
+        self.cycle = cycle
