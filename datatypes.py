@@ -14,22 +14,18 @@ class RFallocation:
     class FUTypes(Enum):
         ADD, MUL, LOAD = range(3)
 
-    address: int
-    name: str
-    type: FUTypes
-
     def __init__(self, csvrow: List[str]):
-        self.address = int(csvrow[0])
+        self.address: int = int(csvrow[0])
         tmp = csvrow[1].split(' ')
-        self.name = tmp[0][1]
+        self.name: str = tmp[0][1]
         label = tmp[1]
 
         if 'mul' in label:
-            self.type = self.FUTypes.MUL
+            self.type: RFallocation.FUTypes = self.FUTypes.MUL
         elif 'add' in label:
-            self.type = self.FUTypes.ADD
+            self.type: RFallocation.FUTypes = self.FUTypes.ADD
         else:
-            self.type = self.FUTypes.LOAD
+            self.type: RFallocation.FUTypes = self.FUTypes.LOAD
 
     def get_node(self, graph: AGraph):
         return graph.get_node(self.name)
@@ -40,12 +36,9 @@ class DoubleUnidenticalOPInputException(Exception):
 
 
 class Instruction:
-    name: str
-    cycle: int
-
     def __init__(self, name: str, cycle: int):
-        self.name = name
-        self.cycle = cycle
+        self.name: str = name
+        self.cycle: int = cycle
 
 
 def parse_instruction(n: Node):

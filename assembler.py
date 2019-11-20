@@ -3,10 +3,8 @@ from typing import List
 
 
 class Assembler:
-    assembly: List[ATAInstruction]
-
     def __init__(self):
-        self.assembly = []
+        self.assembly: List[ATAInstruction] = []
 
     def add_assembly(self, assembly: List[ATAInstruction]):
         tmp = assembly
@@ -15,4 +13,7 @@ class Assembler:
         self.assembly = sorted(tmp + self.assembly)
 
     def compile(self) -> str:
-        pass
+        for inst in self.assembly:
+            pass
+
+        return ''
