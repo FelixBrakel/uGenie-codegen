@@ -1,0 +1,112 @@
+from typing import Union
+from enum import Enum
+from abc import ABC, abstractmethod
+from atmi import ATMI
+
+
+class OPInput:
+    pass
+
+
+class FUinput:
+    # TODO: make sure this num value doesn't go out of range
+    def __init__(self, num: int):
+        self.num: int = num
+
+
+class RFInput:
+    pass
+
+
+class ATAI(ABC):
+    def __init__(self, cycle: int):
+        self.cycle: int = cycle
+
+    def __lt__(self, other):
+        return self.cycle < other.cycle
+
+    @abstractmethod
+    def to_atmi(self) -> ATMI:
+        pass
+
+
+class ATAFetch(ATAI):
+    class REG(Enum):
+        REG0 = 0
+        REG1 = 1
+
+    def __init__(self, addr: int, reg: REG, cycle: int):
+        super().__init__(cycle)
+        self.addr: int = addr
+        self.reg: ATAFetch.REG = reg
+
+    def to_atmi(self) -> ATMI:
+        # TODO: Don't hardcode these parameters
+        atmi = ATMI(3, 3)
+        atmi.cycle = self.cycle
+
+        if self.reg == ATAFetch.REG.REG0:
+            atmi.r_reg0_s = self.addr
+        else:
+            atmi.r_reg1_s = self.addr
+
+        atmi.insts['Fetch'] = 1
+
+        return atmi
+
+
+class ATAStore(ATAI):
+    def __init__(self,
+                 inp: Union[FUinput, OPInput],
+                 addr: int,
+                 cycle: int):
+        super().__init__(cycle)
+        self.input: Union[FUinput, OPInput] = inp
+        self.addr: int = addr
+
+    def to_atmi(self) -> ATMI:
+        # TODO: Don't hardcode these parameters
+        atmi = ATMI(3, 3)
+        atmi.cycle = self.cycle
+
+        if self.input == FUinput:
+            atmi.cbOut2 = self.input.num
+            atmi.reg0 = True
+            atmi.w_reg0_s = self.addr
+        else:
+            atmi.reg1 = True
+            atmi.w_reg1_s = self.addr
+
+        atmi.insts['Store'] = 1
+
+        return atmi
+
+
+class ATAOp(ATAI):
+    def __init__(self, input0: Union[FUinput, OPInput, RFInput], input1: Union[FUinput, OPInput, RFInput], cycle: int):
+        super().__init__(cycle)
+        self.input0: Union[FUinput, OPInput, RFInput] = input0
+        self.input1: Union[FUinput, OPInput, RFInput] = input1
+
+    def to_atmi(self) -> ATMI:
+        # TODO: Don't hardcode these parameters
+        atmi = ATMI(3, 3)
+        atmi.cycle = self.cycle
+
+        if self.input0 == FUinput:
+            atmi.muxa = atmi.MuxA.FU
+        elif self.input0 == OPInput:
+            atmi.muxa = atmi.MuxA.OP
+        else:
+            atmi.muxa = atmi.MuxA.RF
+
+        if self.input1 == FUinput:
+            atmi.muxb = atmi.MuxB.FU
+        elif self.input1 == OPInput:
+            atmi.muxb = atmi.MuxB.OP
+        else:
+            atmi.muxb = atmi.MuxB.RF
+
+        atmi.insts['Op'] = 1
+
+        return atmi

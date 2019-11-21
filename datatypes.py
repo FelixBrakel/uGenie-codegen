@@ -17,7 +17,7 @@ class RFallocation:
     def __init__(self, csvrow: List[str]):
         self.address: int = int(csvrow[0])
         tmp = csvrow[1].split(' ')
-        self.name: str = tmp[0][1]
+        self.name: str = tmp[0][1:-1]
         label = tmp[1]
 
         if 'mul' in label:

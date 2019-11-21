@@ -6,6 +6,7 @@ import op_generator
 import alloc_generator
 from typing import List
 from assembler import Assembler
+from atmi import ATMI
 from datatypes import RFallocation
 
 
@@ -16,6 +17,7 @@ def main():
     # instructions: List[Instruction] = []
 
     for fu in fus:
+        ATMI.max_cycle = 0
         assembler = Assembler()
 
         label = fu.graph_attr['label'].strip()
@@ -23,13 +25,16 @@ def main():
         if 'load' in label:
             continue
 
-        rf_alloc_path = 'dotfiles/Architecture_latency_146_' + label + '_rf_allocation.csv'
-        rf_allocs: List[RFallocation] = rf_alloc_parser(rf_alloc_path)
+        if label == 'add_1':
+            rf_alloc_path = 'dotfiles/Architecture_latency_146_' + label + '_rf_allocation.csv'
+            rf_allocs: List[RFallocation] = rf_alloc_parser(rf_alloc_path)
 
-        assembler.add_assembly(op_generator.gen_op_insts(rf_allocs, dfg, fu))
-        assembler.add_assembly(alloc_generator.gen_alloc_insts(rf_allocs, dfg, fu))
+            assembler.add_assembly(op_generator.gen_op_insts(rf_allocs, dfg, fu))
+            assembler.add_assembly(alloc_generator.gen_alloc_insts(rf_allocs, dfg, fu))
 
-        assembler.compile()
+            assembler.compile()
+            assembler.print()
+            break
 
 
 def rf_alloc_parser(rf_alloc_path) -> List[RFallocation]:

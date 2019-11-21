@@ -1,10 +1,10 @@
 from typing import List
 from datatypes import RFallocation, parse_instruction, Config
-from ATA import ATAStore, OPInput, FUinput, ATAInstruction
+from ata import ATAStore, OPInput, FUinput, ATAI
 from pygraphviz import AGraph
 
 
-def gen_alloc_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> List[ATAInstruction]:
+def gen_alloc_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> List[ATAI]:
     rf_insts = []
     for rf_alloc in rf_allocs:
         inst = parse_instruction(dfg.get_node(rf_alloc.name))
@@ -22,7 +22,7 @@ def gen_alloc_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> L
             # TODO: map fu input
             input_type = FUinput(1)
 
-        cycle = inst.cycle + rf_alloc.type
-        rf_insts.append(ATAStore(input_type, cycle, rf_alloc.address))
+        cycle = inst.cycle + latency
+        rf_insts.append(ATAStore(input_type, rf_alloc.address, cycle))
 
     return rf_insts

@@ -1,5 +1,5 @@
 from datatypes import RFallocation, Instruction, DoubleUnidenticalOPInputException, parse_instruction, Config
-from ATA import ATAInstruction, ATAFetch, ATAOp, RFInput, OPInput, FUinput
+from ata import ATAI, ATAFetch, ATAOp, RFInput, OPInput, FUinput
 from pygraphviz import AGraph, Node
 from typing import List, Union, Type, Optional
 
@@ -13,7 +13,7 @@ def find_rf_alloc(rf_allocs: List[RFallocation], instruction: Instruction) -> Op
 
 
 # Returns an unsorted list of assembly
-def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> List[ATAInstruction]:
+def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> List[ATAI]:
     assembly = []
     instructions: List[Instruction] = []
 
@@ -25,7 +25,10 @@ def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> List
         nodes = dfg.predecessors(n)
 
         input_type0 = inst_input_type(rf_allocs, fu, nodes[0])
-        input_type1 = inst_input_type(rf_allocs, fu, nodes[1])
+        if len(nodes) > 1:
+            input_type1 = inst_input_type(rf_allocs, fu, nodes[1])
+        else:
+            input_type1 = input_type0
 
         # This should never occur but we check for it anyways
         if input_type0 == OPInput and input_type1 == OPInput:
@@ -60,7 +63,7 @@ def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> List
 def generate_fetch(rf_allocs: List[RFallocation],
                    instruction: Instruction,
                    pred: Node,
-                   reg: ATAFetch.REG) -> ATAInstruction:
+                   reg: ATAFetch.REG) -> ATAI:
     cycle = instruction.cycle - Config.FETCH_LATENCY
     address = find_rf_alloc(rf_allocs, Instruction(pred.get_name(), pred.attr['label'])).address
 
