@@ -1,6 +1,6 @@
 from typing import List
 from datatypes import RFallocation, parse_instruction, Config
-from ata import ATAStore, OPInput, FUinput, ATAI
+from ata import ATAStore, OpInput, FUinput, ATAI
 from pygraphviz import AGraph
 
 
@@ -17,7 +17,7 @@ def gen_alloc_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> L
             latency = 0
 
         if rf_alloc.name in fu:
-            input_type = OPInput()
+            input_type = OpInput()
         else:
             # TODO: map fu input
             input_type = FUinput(1)

@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from atmi import ATMI
 
 
-class OPInput:
+class OpInput:
     pass
 
 
@@ -57,11 +57,11 @@ class ATAFetch(ATAI):
 
 class ATAStore(ATAI):
     def __init__(self,
-                 inp: Union[FUinput, OPInput],
+                 inp: Union[FUinput, OpInput],
                  addr: int,
                  cycle: int):
         super().__init__(cycle)
-        self.input: Union[FUinput, OPInput] = inp
+        self.input: Union[FUinput, OpInput] = inp
         self.addr: int = addr
 
     def to_atmi(self) -> ATMI:
@@ -83,10 +83,10 @@ class ATAStore(ATAI):
 
 
 class ATAOp(ATAI):
-    def __init__(self, input0: Union[FUinput, OPInput, RFInput], input1: Union[FUinput, OPInput, RFInput], cycle: int):
+    def __init__(self, input0: Union[FUinput, OpInput, RFInput], input1: Union[FUinput, OpInput, RFInput], cycle: int):
         super().__init__(cycle)
-        self.input0: Union[FUinput, OPInput, RFInput] = input0
-        self.input1: Union[FUinput, OPInput, RFInput] = input1
+        self.input0: Union[FUinput, OpInput, RFInput] = input0
+        self.input1: Union[FUinput, OpInput, RFInput] = input1
 
     def to_atmi(self) -> ATMI:
         # TODO: Don't hardcode these parameters
@@ -95,14 +95,14 @@ class ATAOp(ATAI):
 
         if self.input0 == FUinput:
             atmi.muxa = atmi.MuxA.FU
-        elif self.input0 == OPInput:
+        elif self.input0 == OpInput:
             atmi.muxa = atmi.MuxA.OP
         else:
             atmi.muxa = atmi.MuxA.RF
 
         if self.input1 == FUinput:
             atmi.muxb = atmi.MuxB.FU
-        elif self.input1 == OPInput:
+        elif self.input1 == OpInput:
             atmi.muxb = atmi.MuxB.OP
         else:
             atmi.muxb = atmi.MuxB.RF
