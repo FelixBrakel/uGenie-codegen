@@ -1,6 +1,7 @@
 from __future__ import annotations
 from enum import Enum
 from typing import Optional
+from math import log2, ceil
 
 
 class MergeException(Exception):
@@ -13,6 +14,10 @@ class ValueOutOfRangeException(Exception):
 
 class ATMI:
     max_cycle: int = 0
+    # TODO: These static variables should be set in the main loop for every FU. At the moment it is not clear if
+    #  these can be read from a file or need to be determined at runtime
+    # rf_depth: int
+    # input_ports: int
 
     class MuxA(Enum):
         OP = 0
@@ -134,8 +139,23 @@ class ATMI:
         # NOTE: Neither of these should ever happen because we check for it in the merge_into function
         if self.muxa is not None:
             raise MergeException('Muxa for Op instruction is already set')
-        elif self.muxb is not None:
+        if self.muxb is not None:
             raise MergeException('Muxb for Op instruction is already set')
+
+        # NOTE: These should never occur since the muxa and muxb checks should also cover these
+        if other.cbOut0 is not None:
+            if self.cbOut0 is not None:
+                raise MergeException('')
+            else:
+                self.cbOut0 = other.cbOut0
+
+        # NOTE: We raise an execption because the merge has failed but we still could have possibly set cbOut0,
+        #  we might have to unset it if we want to do something else with this ATMI object later.
+        if other.cbOut1 is not None:
+            if self.cbOut1 is not None:
+                raise MergeException('')
+            else:
+                self.cbOut1 = other.cbOut1
 
         self.muxa = other.muxa
         self.muxb = other.muxb
@@ -207,35 +227,84 @@ class ATMI:
         if other.insts['Op'] > 0:
             self._merge_op(other)
 
-    def str_helper(self, x):
+    def _debug_str_helper(self, x):
         if x is None:
             return "None"
 
         return x
 
-    def __str__(self):
-        cycle = self.str_helper(self.cycle)
-        cbOut0 = self.str_helper(self.cbOut0)
-        cbOut1 = self.str_helper(self.cbOut1)
-        cbOut2 = self.str_helper(self.cbOut2)
-        reg0 = self.str_helper(self.reg0)
-        reg1 = self.str_helper(self.reg1)
-        r_reg0_s = self.str_helper(self.r_reg0_s)
-        r_reg1_s = self.str_helper(self.r_reg1_s)
-        w_reg0_s = self.str_helper(self.w_reg0_s)
-        w_reg1_s = self.str_helper(self.w_reg1_s)
-        muxa = self.str_helper(self.muxa)
-        muxb = self.str_helper(self.muxb)
+    def _str_helper(self, x):
+        if x is None:
+            return 0
 
-        return '{:7} {:7} {:7} {:7} {:7} {:7} {:7} {:7} {:7} {:7} {:7} {:7}'.format(cycle,
-                                                                                    cbOut0,
-                                                                                    cbOut1,
-                                                                                    cbOut2,
-                                                                                    reg0,
-                                                                                    reg1,
-                                                                                    r_reg0_s,
-                                                                                    r_reg1_s,
-                                                                                    w_reg0_s,
-                                                                                    w_reg1_s,
-                                                                                    muxa,
-                                                                                    muxb)
+        if type(x) is self.MuxA or type(x) is self.MuxB:
+            return x.value
+
+        if type(x) is bool:
+            if x:
+                return 1
+
+            return 0
+
+        return x
+
+    def __str__(self) -> str:
+        cycle = self._debug_str_helper(self.cycle)
+        cbOut0 = self._debug_str_helper(self.cbOut0)
+        cbOut1 = self._debug_str_helper(self.cbOut1)
+        cbOut2 = self._debug_str_helper(self.cbOut2)
+        reg0 = self._debug_str_helper(self.reg0)
+        reg1 = self._debug_str_helper(self.reg1)
+        r_reg0_s = self._debug_str_helper(self.r_reg0_s)
+        r_reg1_s = self._debug_str_helper(self.r_reg1_s)
+        w_reg0_s = self._debug_str_helper(self.w_reg0_s)
+        w_reg1_s = self._debug_str_helper(self.w_reg1_s)
+        muxa = self._debug_str_helper(self.muxa)
+        muxb = self._debug_str_helper(self.muxb)
+
+        return '{:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}'.format(cycle,
+                                                                                                cbOut0,
+                                                                                                cbOut1,
+                                                                                                cbOut2,
+                                                                                                reg0,
+                                                                                                reg1,
+                                                                                                r_reg0_s,
+                                                                                                r_reg1_s,
+                                                                                                w_reg0_s,
+                                                                                                w_reg1_s,
+                                                                                                muxa,
+                                                                                                muxb)
+
+    def to_bitstring(self) -> str:
+        rf_bits = int(ceil(log2(self._rf_depth + 1)))
+        clock_bits = int(ceil(log2(self.max_cycle + 1)))
+        fu_bits = int(ceil(log2(self._input_ports + 1)))
+
+        return '\"' \
+               '{:0{clk}b}' \
+               '{:0{fu}b}' \
+               '{:0{fu}b}' \
+               '{:0{fu}b}' \
+               '{:1b}' \
+               '{:1b}' \
+               '{:0{rf}b}' \
+               '{:0{rf}b}' \
+               '{:0{rf}b}' \
+               '{:0{rf}b}' \
+               '{:02b}' \
+               '{:02b}' \
+               '\"'.format(self._str_helper(self.cycle),
+                           self._str_helper(self.cbOut0),
+                           self._str_helper(self.cbOut1),
+                           self._str_helper(self.cbOut2),
+                           self._str_helper(self.reg0),
+                           self._str_helper(self.reg1),
+                           self._str_helper(self.r_reg0_s),
+                           self._str_helper(self.r_reg1_s),
+                           self._str_helper(self.w_reg0_s),
+                           self._str_helper(self.w_reg1_s),
+                           self._str_helper(self.muxa),
+                           self._str_helper(self.muxb),
+                           clk=clock_bits,
+                           fu=fu_bits,
+                           rf=rf_bits)

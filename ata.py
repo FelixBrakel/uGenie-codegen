@@ -69,7 +69,7 @@ class ATAStore(ATAI):
         atmi = ATMI(3, 3)
         atmi.cycle = self.cycle
 
-        if self.input == FUinput:
+        if type(self.input) == FUinput:
             atmi.cbOut2 = self.input.num
             atmi.reg0 = True
             atmi.w_reg0_s = self.addr
@@ -93,16 +93,21 @@ class ATAOp(ATAI):
         atmi = ATMI(3, 3)
         atmi.cycle = self.cycle
 
-        if self.input0 == FUinput:
+        type0 = type(self.input0)
+        type1 = type(self.input1)
+
+        if type0 == FUinput:
             atmi.muxa = atmi.MuxA.FU
-        elif self.input0 == OPInput:
+            atmi.cbOut0 = self.input0.num
+        elif type0 == OPInput:
             atmi.muxa = atmi.MuxA.OP
         else:
             atmi.muxa = atmi.MuxA.RF
 
-        if self.input1 == FUinput:
+        if type1 == FUinput:
             atmi.muxb = atmi.MuxB.FU
-        elif self.input1 == OPInput:
+            atmi.cbOut1 = self.input1.num
+        elif type1 == OPInput:
             atmi.muxb = atmi.MuxB.OP
         else:
             atmi.muxb = atmi.MuxB.RF

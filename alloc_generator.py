@@ -1,11 +1,16 @@
-from typing import List
+from typing import List, Dict
 from datatypes import RFallocation, parse_instruction, Config
 from ata import ATAStore, OPInput, FUinput, ATAI
 from pygraphviz import AGraph
 
 
-def gen_alloc_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> List[ATAI]:
+class AllocException(Exception):
+    pass
+
+
+def gen_alloc_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> List[ATAI]:
     rf_insts = []
+
     for rf_alloc in rf_allocs:
         inst = parse_instruction(dfg.get_node(rf_alloc.name))
         if rf_alloc.type == RFallocation.FUTypes.MUL:
@@ -20,7 +25,9 @@ def gen_alloc_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> L
             input_type = OPInput()
         else:
             # TODO: map fu input
-            input_type = FUinput(1)
+            input_type = FUinput(input_map[rf_alloc.name])
+            if input_type is None:
+                raise AllocException('alloc not found in input map')
 
         cycle = inst.cycle + latency
         rf_insts.append(ATAStore(input_type, rf_alloc.address, cycle))

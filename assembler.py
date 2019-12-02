@@ -27,18 +27,18 @@ class Assembler:
         print('done')
 
     def print(self):
-        output = '{:7} {:7} {:7} {:7} {:7} {:7} {:7} {:7} {:7} {:7} {:7} {:7}'.format('cycle',
-                                                                                      'cbOut0',
-                                                                                      'cbOut1',
-                                                                                      'cbOut2',
-                                                                                      'reg0',
-                                                                                      'reg1',
-                                                                                      'r_reg0_s',
-                                                                                      'r_reg1_s',
-                                                                                      'w_reg0_s',
-                                                                                      'w_reg1_s',
-                                                                                      'muxa',
-                                                                                      'muxb')
+        output = '{:8} {:8} {:8} {:8} {:8} {:8} {:8} {:8} {:8} {:8} {:8} {:8}\n'.format('cycle',
+                                                                                        'cbOut0',
+                                                                                        'cbOut1',
+                                                                                        'cbOut2',
+                                                                                        'reg0',
+                                                                                        'reg1',
+                                                                                        'r_reg0_s',
+                                                                                        'r_reg1_s',
+                                                                                        'w_reg0_s',
+                                                                                        'w_reg1_s',
+                                                                                        'muxa',
+                                                                                        'muxb')
         for atmi in self.atmc:
             output += str(atmi) + '\n'
 

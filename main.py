@@ -4,7 +4,8 @@ import os.path
 import csv
 import op_generator
 import alloc_generator
-from typing import List
+import input_mapper
+from typing import List, Dict
 from assembler import Assembler
 from atmi import ATMI
 from datatypes import RFallocation
@@ -13,8 +14,14 @@ from datatypes import RFallocation
 def main():
     # agraph: AGraph = AGraph('dotfiles/Architecture_latency_146.dot')
     dfg = parser('dotfiles/Architecture_latency_146.dot')
+    simplified_dfg = parser('dotfiles/Architecture_latency_146_schematic.dot')
+
     fus: List[AGraph] = dfg.subgraphs()
     # instructions: List[Instruction] = []
+
+    subgraphs = {}
+    for subgraph in fus:
+        subgraphs[subgraph.graph_attr['label'].strip()] = subgraph
 
     for fu in fus:
         ATMI.max_cycle = 0
@@ -26,11 +33,12 @@ def main():
             continue
 
         if label == 'add_1':
+            input_map = input_mapper.map_input(fu, subgraphs, simplified_dfg)
             rf_alloc_path = 'dotfiles/Architecture_latency_146_' + label + '_rf_allocation.csv'
             rf_allocs: List[RFallocation] = rf_alloc_parser(rf_alloc_path)
 
-            assembler.add_assembly(op_generator.gen_op_insts(rf_allocs, dfg, fu))
-            assembler.add_assembly(alloc_generator.gen_alloc_insts(rf_allocs, dfg, fu))
+            assembler.add_assembly(op_generator.gen_op_insts(rf_allocs, dfg, fu, input_map))
+            assembler.add_assembly(alloc_generator.gen_alloc_insts(rf_allocs, dfg, fu, input_map))
 
             assembler.compile()
             assembler.print()

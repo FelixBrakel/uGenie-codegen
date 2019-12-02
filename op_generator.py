@@ -1,7 +1,11 @@
 from datatypes import RFallocation, Instruction, DoubleUnidenticalOPInputException, parse_instruction, Config
 from ata import ATAI, ATAFetch, ATAOp, RFInput, OPInput, FUinput
 from pygraphviz import AGraph, Node
-from typing import List, Union, Type, Optional
+from typing import List, Union, Type, Optional, Dict
+
+
+class FUinputException(Exception):
+    pass
 
 
 def find_rf_alloc(rf_allocs: List[RFallocation], instruction: Instruction) -> Optional[RFallocation]:
@@ -13,7 +17,7 @@ def find_rf_alloc(rf_allocs: List[RFallocation], instruction: Instruction) -> Op
 
 
 # Returns an unsorted list of assembly
-def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> List[ATAI]:
+def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> List[ATAI]:
     assembly = []
     instructions: List[Instruction] = []
 
@@ -44,7 +48,11 @@ def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> List
             input0 = OPInput()
         else:
             # TODO: DETERMINE FU INPUT NUMBER
-            input0 = FUinput(1)
+            n = input_map[nodes[0].get_name()]
+            if n is None:
+                raise FUinputException('Cannot find FU from which predecessing node originates in map')
+
+            input0 = FUinput(n)
 
         if input_type1 == RFInput:
             assembly.append(generate_fetch(rf_allocs, instruction, nodes[1], ATAFetch.REG.REG1))
@@ -53,7 +61,11 @@ def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph) -> List
             input1 = OPInput()
         else:
             # TODO: DETERMINE FU INPUT NUMBER
-            input1 = FUinput(1)
+            n = input_map[nodes[1].get_name()]
+            if n is None:
+                raise FUinputException('Cannot find FU from which predecessing node originates in map')
+
+            input1 = FUinput(n)
 
         assembly.append(ATAOp(input0, input1, instruction.cycle))
 
