@@ -1,5 +1,5 @@
 from datatypes import RFallocation, Instruction, DoubleUnidenticalOPInputException, parse_instruction, Config
-from ata import ATAI, ATAFetch, ATAOp, RFInput, OPInput, FUinput
+from ata import ATAI, ATAFetch, ATAOp, RFInput, OpInput, FUinput
 from pygraphviz import AGraph, Node
 from typing import List, Union, Type, Optional, Dict
 
@@ -35,7 +35,7 @@ def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph, input_m
             input_type1 = input_type0
 
         # This should never occur but we check for it anyways
-        if input_type0 == OPInput and input_type1 == OPInput:
+        if input_type0 == OpInput and input_type1 == OpInput:
             if nodes[0] != nodes[1]:
                 raise DoubleUnidenticalOPInputException
 
@@ -44,8 +44,8 @@ def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph, input_m
             # If the data is in the RF we need to generate fetch instructions
             assembly.append(generate_fetch(rf_allocs, instruction, nodes[0], ATAFetch.REG.REG0))
             input0 = RFInput()
-        elif input_type0 == OPInput:
-            input0 = OPInput()
+        elif input_type0 == OpInput:
+            input0 = OpInput()
         else:
             # TODO: DETERMINE FU INPUT NUMBER
             n = input_map[nodes[0].get_name()]
@@ -57,8 +57,8 @@ def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph, input_m
         if input_type1 == RFInput:
             assembly.append(generate_fetch(rf_allocs, instruction, nodes[1], ATAFetch.REG.REG1))
             input1 = RFInput()
-        elif input_type1 == OPInput:
-            input1 = OPInput()
+        elif input_type1 == OpInput:
+            input1 = OpInput()
         else:
             # TODO: DETERMINE FU INPUT NUMBER
             n = input_map[nodes[1].get_name()]
@@ -84,12 +84,12 @@ def generate_fetch(rf_allocs: List[RFallocation],
 
 def inst_input_type(rf_allocs: List[RFallocation],
                     fu: AGraph,
-                    pred: Node) -> Union[Type[RFInput], Type[OPInput], Type[FUinput]]:
+                    pred: Node) -> Union[Type[RFInput], Type[OpInput], Type[FUinput]]:
     for rf_alloc in rf_allocs:
         if rf_alloc.name == pred.get_name():
             return RFInput
 
     if pred in fu:
-        return OPInput
+        return OpInput
     else:
         return FUinput
