@@ -15,10 +15,10 @@ class Assembler:
 
         self.assembly = sorted(tmp + self.assembly)
 
-    def compile(self):
-        self.atmc.append(self.assembly[0].to_atmi())
+    def compile(self, max_address: int, max_fu: int):
+        self.atmc.append(self.assembly[0].to_atmi(max_address, max_fu))
         for inst in self.assembly[1:]:
-            atmi = inst.to_atmi()
+            atmi = inst.to_atmi(max_address, max_fu)
             if inst.cycle == self.atmc[-1].cycle:
                 self.atmc[-1].merge_into(atmi)
             else:
@@ -43,3 +43,11 @@ class Assembler:
             output += str(atmi) + '\n'
 
         print(output)
+
+    def export(self) -> List[str]:
+        out = []
+
+        for atmi in self.atmc:
+            out.append(atmi.to_bitstring())
+
+        return out

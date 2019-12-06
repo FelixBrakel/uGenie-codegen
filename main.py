@@ -5,19 +5,18 @@ import csv
 import op_generator
 import alloc_generator
 import input_mapper
-from typing import List, Dict
+import control_signal_generator
+from typing import List, Tuple
 from assembler import Assembler
 from atmi import ATMI
 from datatypes import RFallocation
 
 
 def main():
-    # agraph: AGraph = AGraph('dotfiles/Architecture_latency_146.dot')
     dfg = parser('dotfiles/Architecture_latency_146.dot')
     simplified_dfg = parser('dotfiles/Architecture_latency_146_schematic.dot')
 
     fus: List[AGraph] = dfg.subgraphs()
-    # instructions: List[Instruction] = []
 
     subgraphs = {}
     for subgraph in fus:
@@ -29,36 +28,47 @@ def main():
 
         label = fu.graph_attr['label'].strip()
         # NOTE: handle load FUs
-        if 'load' in label:
+        if 'load' in label or 'store' in label:
             continue
 
-        if label == 'add_1':
-            input_map = input_mapper.map_input(fu, subgraphs, simplified_dfg)
-            rf_alloc_path = 'dotfiles/Architecture_latency_146_' + label + '_rf_allocation.csv'
-            rf_allocs: List[RFallocation] = rf_alloc_parser(rf_alloc_path)
+        input_map, max_fu = input_mapper.map_input(fu, subgraphs, simplified_dfg)
+        rf_alloc_path = 'dotfiles/Architecture_latency_146_' + label + '_rf_allocation.csv'
+        rf_allocs, max_address = rf_alloc_parser(rf_alloc_path)
 
-            assembler.add_assembly(op_generator.gen_op_insts(rf_allocs, dfg, fu, input_map))
-            assembler.add_assembly(alloc_generator.gen_alloc_insts(rf_allocs, dfg, fu, input_map))
+        assembler.add_assembly(op_generator.gen_op_insts(rf_allocs, dfg, fu, input_map))
+        assembler.add_assembly(alloc_generator.gen_alloc_insts(rf_allocs, dfg, fu, input_map))
 
-            assembler.compile()
-            assembler.print()
-            break
+        assembler.compile(max_address, max_fu)
+        # assembler.print()
+        vhdl = control_signal_generator.insert_signals(assembler.export())
+        config = control_signal_generator.gen_config(assembler, max_address, max_fu, 3, label)
+
+        for code in vhdl:
+            print(code)
+
+        for line in config:
+            print(line)
 
 
-def rf_alloc_parser(rf_alloc_path) -> List[RFallocation]:
+def rf_alloc_parser(rf_alloc_path) -> Tuple[List[RFallocation], int]:
     rf_allocs = []
+    max_address = 0
 
     if not os.path.exists(rf_alloc_path):
-        return rf_allocs
+        return rf_allocs, max_address
 
     with open(rf_alloc_path) as rf_alloc_file:
         rf_alloc_data = csv.reader(rf_alloc_file)
 
         next(rf_alloc_data)
         for row in rf_alloc_data:
-            rf_allocs.append(RFallocation(row))
+            tmp = RFallocation(row)
+            rf_allocs.append(tmp)
 
-        return rf_allocs
+            if tmp.address > max_address:
+                max_address = tmp.address
+
+        return rf_allocs, max_address
 
 
 def parser(architecture_file_path: str) -> AGraph:

@@ -19,7 +19,7 @@ def gen_alloc_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph, inpu
             latency = Config.ADD_LATENCY
         else:
             # TODO: load inst latency?
-            latency = 0
+            latency = 1
 
         if rf_alloc.name in fu:
             input_type = OpInput()

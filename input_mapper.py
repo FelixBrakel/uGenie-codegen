@@ -1,8 +1,8 @@
 from pygraphviz.agraph import AGraph
-from typing import Dict
+from typing import Dict, Tuple
 
 
-def map_input(fu: AGraph, subgraphs: Dict[str, AGraph], simplified_dfg: AGraph) -> Dict[str, int]:
+def map_input(fu: AGraph, subgraphs: Dict[str, AGraph], simplified_dfg: AGraph) -> Tuple[Dict[str, int], int]:
     label = fu.graph_attr['label'].strip()
     preds = simplified_dfg.predecessors(label)
 
@@ -22,4 +22,4 @@ def map_input(fu: AGraph, subgraphs: Dict[str, AGraph], simplified_dfg: AGraph) 
             out[node.get_name()] = i
         i += 1
 
-    return out
+    return out, i

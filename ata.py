@@ -26,7 +26,7 @@ class ATAI(ABC):
         return self.cycle < other.cycle
 
     @abstractmethod
-    def to_atmi(self) -> ATMI:
+    def to_atmi(self, rf_depth: int, input_ports: int) -> ATMI:
         pass
 
 
@@ -40,9 +40,9 @@ class ATAFetch(ATAI):
         self.addr: int = addr
         self.reg: ATAFetch.REG = reg
 
-    def to_atmi(self) -> ATMI:
+    def to_atmi(self, rf_depth: int, input_ports: int) -> ATMI:
         # TODO: Don't hardcode these parameters
-        atmi = ATMI(3, 3)
+        atmi = ATMI(rf_depth, input_ports)
         atmi.cycle = self.cycle
 
         if self.reg == ATAFetch.REG.REG0:
@@ -64,9 +64,9 @@ class ATAStore(ATAI):
         self.input: Union[FUinput, OpInput] = inp
         self.addr: int = addr
 
-    def to_atmi(self) -> ATMI:
+    def to_atmi(self, rf_depth: int, input_ports: int) -> ATMI:
         # TODO: Don't hardcode these parameters
-        atmi = ATMI(3, 3)
+        atmi = ATMI(rf_depth, input_ports)
         atmi.cycle = self.cycle
 
         if type(self.input) == FUinput:
@@ -88,9 +88,9 @@ class ATAOp(ATAI):
         self.input0: Union[FUinput, OpInput, RFInput] = input0
         self.input1: Union[FUinput, OpInput, RFInput] = input1
 
-    def to_atmi(self) -> ATMI:
+    def to_atmi(self, rf_depth: int, input_ports: int) -> ATMI:
         # TODO: Don't hardcode these parameters
-        atmi = ATMI(3, 3)
+        atmi = ATMI(rf_depth, input_ports)
         atmi.cycle = self.cycle
 
         type0 = type(self.input0)

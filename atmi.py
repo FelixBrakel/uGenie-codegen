@@ -55,8 +55,8 @@ class ATMI:
     @cycle.setter
     def cycle(self, cycle: int):
         self._cycle = cycle
-        if cycle > self.max_cycle:
-            self.max_cycle = cycle
+        if cycle > ATMI.max_cycle:
+            ATMI.max_cycle = cycle
 
     @property
     def cbOut0(self):
@@ -65,7 +65,7 @@ class ATMI:
     @cbOut0.setter
     def cbOut0(self, cbOut0: int):
         if not 0 <= cbOut0 <= self._input_ports:
-            raise ValueOutOfRangeException('cbOut0')
+            raise ValueOutOfRangeException('cbOut0: ' + str(cbOut0) + ', max: ' + str(self._input_ports))
         else:
             self._cbOut0 = cbOut0
 
@@ -76,7 +76,7 @@ class ATMI:
     @cbOut1.setter
     def cbOut1(self, cbOut1: int):
         if not 0 <= cbOut1 <= self._input_ports:
-            raise ValueOutOfRangeException('cbOut1')
+            raise ValueOutOfRangeException('cbOut1: ' + str(cbOut1) + ', max: ' + str(self._input_ports))
         else:
             self._cbOut1 = cbOut1
 
@@ -87,7 +87,7 @@ class ATMI:
     @cbOut2.setter
     def cbOut2(self, cbOut2: int):
         if not 0 <= cbOut2 <= self._input_ports:
-            raise ValueOutOfRangeException('cbOut2')
+            raise ValueOutOfRangeException('cbOut2: ' + str(cbOut2) + ', max: ' + str(self._input_ports))
         else:
             self._cbOut2 = cbOut2
 
@@ -280,7 +280,7 @@ class ATMI:
         clock_bits = int(ceil(log2(self.max_cycle + 1)))
         fu_bits = int(ceil(log2(self._input_ports + 1)))
 
-        return '\"' \
+        return '' \
                '{:0{clk}b}' \
                '{:0{fu}b}' \
                '{:0{fu}b}' \
@@ -293,18 +293,18 @@ class ATMI:
                '{:0{rf}b}' \
                '{:02b}' \
                '{:02b}' \
-               '\"'.format(self._str_helper(self.cycle),
-                           self._str_helper(self.cbOut0),
-                           self._str_helper(self.cbOut1),
-                           self._str_helper(self.cbOut2),
-                           self._str_helper(self.reg0),
-                           self._str_helper(self.reg1),
-                           self._str_helper(self.r_reg0_s),
-                           self._str_helper(self.r_reg1_s),
-                           self._str_helper(self.w_reg0_s),
-                           self._str_helper(self.w_reg1_s),
-                           self._str_helper(self.muxa),
-                           self._str_helper(self.muxb),
-                           clk=clock_bits,
-                           fu=fu_bits,
-                           rf=rf_bits)
+               ''.format(self._str_helper(self.cycle),
+                         self._str_helper(self.cbOut0),
+                         self._str_helper(self.cbOut1),
+                         self._str_helper(self.cbOut2),
+                         self._str_helper(self.reg0),
+                         self._str_helper(self.reg1),
+                         self._str_helper(self.r_reg0_s),
+                         self._str_helper(self.r_reg1_s),
+                         self._str_helper(self.w_reg0_s),
+                         self._str_helper(self.w_reg1_s),
+                         self._str_helper(self.muxa),
+                         self._str_helper(self.muxb),
+                         clk=clock_bits,
+                         fu=fu_bits,
+                         rf=rf_bits)

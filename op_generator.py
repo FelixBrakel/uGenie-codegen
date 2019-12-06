@@ -47,7 +47,6 @@ def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph, input_m
         elif input_type0 == OpInput:
             input0 = OpInput()
         else:
-            # TODO: DETERMINE FU INPUT NUMBER
             n = input_map[nodes[0].get_name()]
             if n is None:
                 raise FUinputException('Cannot find FU from which predecessing node originates in map')
@@ -60,7 +59,6 @@ def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph, input_m
         elif input_type1 == OpInput:
             input1 = OpInput()
         else:
-            # TODO: DETERMINE FU INPUT NUMBER
             n = input_map[nodes[1].get_name()]
             if n is None:
                 raise FUinputException('Cannot find FU from which predecessing node originates in map')
