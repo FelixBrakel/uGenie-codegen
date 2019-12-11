@@ -2,8 +2,8 @@
 # xsim v2019.1.3 (64-bit)
 # SW Build 2644227 on Wed Sep  4 09:44:18 MDT 2019
 # IP Build 2633630 on Wed Sep  4 12:30:14 MDT 2019
-# Start of session at: Tue Dec 10 23:39:40 2019
-# Process ID: 87204
+# Start of session at: Tue Dec 10 23:23:35 2019
+# Process ID: 85881
 # Current directory: /home/felix/Bachelor_Thesis/BSc_Project_Material/vhdl/build
 # Command line: xsim -mode tcl -source {xsim.dir/work.FU_template_tb/xsim_script.tcl}
 # Log file: /home/felix/Bachelor_Thesis/BSc_Project_Material/vhdl/build/xsim.log

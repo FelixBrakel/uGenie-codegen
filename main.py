@@ -8,7 +8,7 @@ import input_mapper
 import control_signal_generator
 from typing import List, Tuple
 from assembler import Assembler
-from atmi import ATMI
+from atmi import ATMI, MergeException
 from datatypes import RFallocation
 
 
@@ -38,16 +38,28 @@ def main():
         assembler.add_assembly(op_generator.gen_op_insts(rf_allocs, dfg, fu, input_map))
         assembler.add_assembly(alloc_generator.gen_alloc_insts(rf_allocs, dfg, fu, input_map))
 
-        assembler.compile(max_address, max_fu)
+        try:
+            assembler.compile(max_address, max_fu)
+            vhdl = control_signal_generator.insert_signals(assembler.export())
+            config = control_signal_generator.gen_config(assembler, max_address, max_fu, 3, label)
+
+            with open('out/' + label, 'w') as f:
+                for line in vhdl:
+                    f.write(line + '\n')
+                f.write('\n')
+                for line in config:
+                    f.write(line + '\n')
+
+        except MergeException as merge:
+            print("ERROR COMPILING INSTRUCTIONS FOR " + label + " : " + merge.args[0])
+
         # assembler.print()
-        vhdl = control_signal_generator.insert_signals(assembler.export())
-        config = control_signal_generator.gen_config(assembler, max_address, max_fu, 3, label)
 
-        for code in vhdl:
-            print(code)
+        # for code in vhdl:
+        #     print(code)
 
-        for line in config:
-            print(line)
+        # for line in config:
+        #     print(line)
 
 
 def rf_alloc_parser(rf_alloc_path) -> Tuple[List[RFallocation], int]:
