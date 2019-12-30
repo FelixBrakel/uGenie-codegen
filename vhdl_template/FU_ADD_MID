@@ -1,0 +1,20 @@
+        )
+        port map(
+            i_clock => r_CLOCK,
+            i_FU => r_i_FU,
+            o_FU => w_o_FU,
+            r_COMPUTING => r_r_COMPUTING,
+            r_LOAD_INST => r_r_LOAD_INST,
+            r_LOAD_NEXT_INST => r_r_LOAD_NEXT_INST,
+            r_INPUT_INST => r_r_INPUT_INST,
+            r_RESET => r_r_RESET
+                );
+
+    p_CLK_GEN: process is
+    begin
+        wait for c_CLOCK_PERIOD/2;
+        r_CLOCK <= not r_CLOCK;
+    end process p_CLK_GEN;
+
+    process
+    begin

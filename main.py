@@ -43,11 +43,11 @@ def main():
             vhdl = control_signal_generator.insert_signals(assembler.export())
             config = control_signal_generator.gen_config(assembler, max_address, max_fu, 3, label)
 
-            with open('out/' + label, 'w') as f:
-                for line in vhdl:
+            with open('out/' + label + '.program', 'w') as f:
+                for line in config:
                     f.write(line + '\n')
                 f.write('\n')
-                for line in config:
+                for line in vhdl:
                     f.write(line + '\n')
 
         except MergeException as merge:

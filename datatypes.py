@@ -40,8 +40,11 @@ class Instruction:
         self.name: str = name
         self.cycle: int = cycle
 
+    def __lt__(self, other):
+        return self.cycle < other.cycle
 
-def parse_instruction(n: Node):
+
+def parse_instruction(n: Node) -> Instruction:
     inst_label = n.attr['label']
     inst_label.strip()
     inst_attr: List[str] = inst_label.split('.')
