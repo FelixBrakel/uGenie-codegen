@@ -2,6 +2,7 @@ from pygraphviz import AGraph
 from typing import List, Tuple, Dict
 from input_mapper import map_input
 from datatypes import Instruction, parse_instruction
+from math import ceil, log2
 import glob
 
 with open('../vhdl_template/FU_ADD_HEAD') as f:
@@ -85,17 +86,19 @@ def merge_inputs(inputs: List[Input]) -> List[Tuple[int, str]]:
 
 def insert_inputs(inputs: List[Tuple[int, str]], end_cycle) -> str:
     out: str = ''
-    control_signal = '        r_i_FU <= '
-    wait = '        wait 50 ns;\n'
+    control_signal = '        r_i_FU <= \"'
+    wait = '        wait for 50 ns;\n'
 
-    curr_c = 1
+    curr_c = 0
     for (c, i) in inputs:
         for w in range(c - curr_c):
+            out += '        -- {}\n'.format(w + curr_c)
             out += wait
         curr_c = c
-        out += control_signal + i + '\n'
+        out += control_signal + i + '\";\n'
 
     for i in range(end_cycle - curr_c):
+        out += '        -- {}\n'.format(i + curr_c)
         out += wait
 
     return out
@@ -112,59 +115,62 @@ def main():
         subgraphs[subgraph.graph_attr['label'].strip()] = subgraph
 
     for filename in glob.glob('../out/*.program'):
-        vhdl_out = ''
-        if 'add' in filename:
-            head = FU_ADD_HEAD
-            mid = FU_ADD_MID
-            foot = FU_ADD_FOOT
-            call = gen_add_input
-        else:
-            continue
-            head = FU_MUL_HEAD
-            mid = FU_MUL_MID
-            foot = FU_MUL_FOOT
-            call = gen_mul_input
+        fu = filename.split('/')[-1]
+        fu = fu.split('.')[0]
 
-        vhdl_out += head
-
+        vhdl_body = ''
         with open(filename) as file:
             for line in file:
                 if line == '\n':
-                    vhdl_out += mid
+                    vhdl_body += FU_ADD_MID
+                    continue
+                if 'TOTAL_WAIT_NS' in line:
+                    tot_wait = line.split(' ')[-1].strip()
                     continue
                 if 'BITWIDTH' in line:
-                    Input.bitwidth = int(line.split('=>')[-1].strip()) + 1
+                    if 'add' in filename:
+                        Input.bitwidth = int(line.split('=>')[-1].strip(',\n')) + 1
+                    else:
+                        Input.bitwidth = int((int(line.split('=>')[-1].strip(',\n')) + 1) / 2)
                 if 'INPUT_PORTS' in line:
-                    Input.input_ports = int(line.split('=>')[-1].strip())
+                    Input.input_ports = int(line.split('=>')[-1].strip(',\n'))
                 if 'TOTAL_EXE_CYCLES' in line:
-                    tot_cycles = int(line.split('=>')[-1].strip())
-                vhdl_out += line
+                    tot_cycles = int(line.split('=>')[-1].strip(',\n'))
+                if 'RF_DEPTH' in line:
+                    rf_depth = int(line.split('=>')[-1].strip(',\n'))
 
-        fu = filename.split('/')[-1]
-        fu = fu.split('.')[0]
+                vhdl_body += line
+
+        i_size = int(ceil(log2(tot_cycles + 1))) + \
+                 int(ceil(log2(Input.input_ports))) * 3 + \
+                 2 + \
+                 int(ceil(log2(rf_depth + 1))) * 4 + \
+                 4 - \
+                 1
+
+        if 'add' in filename:
+            head = FU_ADD_HEAD.format(FU=fu + '_tb', PORTS=str(Input.input_ports), I_SIZE=str(i_size))
+            foot = FU_ADD_FOOT
+            call = gen_add_input
+        else:
+            head = FU_MUL_HEAD.format(FU=fu + '_tb', PORTS=str(Input.input_ports), I_SIZE=str(i_size))
+            foot = FU_MUL_FOOT
+            call = gen_mul_input
+
+        vhdl_out = head + vhdl_body
+
         input_map, _ = map_input(subgraphs[fu], subgraphs, simplified_dfg)
         inputs, outputs = call(dfg, subgraphs[fu], input_map)
         input_strs = merge_inputs(inputs)
         formatted_input = insert_inputs(input_strs, tot_cycles)
         vhdl_out += formatted_input + foot
-        with open(filename + '_tb.vhd', 'w') as file:
+        with open('../vhdl_work_dir/' + fu.split('.program')[0] + '_tb.vhd', 'w') as file:
             file.write(vhdl_out)
 
-        with open(filename + '.out', 'w') as file:
+        with open(filename.split('.program')[0] + '.out', 'w') as file:
+            file.write(tot_wait + '\n')
             for out in outputs:
                 file.write(str(out) + '\n')
-        # print(vhdl_out)
-        # exit(2)
-
-    # build_dir = '../BSc_Project_Material/vhdl/build/'
-    #
-    # xsim = subprocess.Popen(['xsim', build_dir + 'work.FU_template_tb', '-tclbatch', 'tmp.tcl'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    # out = xsim.communicate()
-    # print(out)
-    #
-    # if xsim.poll() is None:
-    #     print('terminating')
-    #     xsim.terminate()
 
 
 def gen_add_input(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[List[Input], List[Output]]:
@@ -175,15 +181,20 @@ def gen_add_input(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[L
         nodes.append(parse_instruction(node))
 
     nodes.sort()
-    exp = 1
+    exp = 0
     for node in nodes:
         preds = dfg.predecessors(node.name)
         parent0 = parse_instruction(preds[0])
         parent1 = parse_instruction(preds[1])
 
         if parent0.name in input_map:
+            if 'mul' in parent0.name:
+                latency = 2
+            else:
+                latency = 1
+
             i0 = 2**exp
-            inputs.append(Input(i0, input_map[parent0.name], parent0.cycle))
+            inputs.append(Input(i0, input_map[parent0.name], parent0.cycle + latency))
         else:
             for output in outputs:
                 if output.cycle == parent0.cycle + 1:
@@ -191,8 +202,13 @@ def gen_add_input(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[L
                     break
 
         if parent1.name in input_map:
+            if 'mul' in parent1.name:
+                latency = 2
+            else:
+                latency = 1
+
             i1 = 2**exp
-            inputs.append(Input(i1, input_map[parent1.name], parent1.cycle))
+            inputs.append(Input(i1, input_map[parent1.name], parent1.cycle + latency))
         else:
             for output in outputs:
                 if output.cycle == parent1.cycle + 1:
@@ -224,9 +240,14 @@ def gen_mul_input(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[L
         parent1 = parse_instruction(preds[1])
 
         if parent0.name in input_map:
+            if 'mul' in parent0.name:
+                latency = 2
+            else:
+                latency = 1
+
             i0 = PRIMES[prime_idx]
             prime_idx += 1
-            inputs.append(Input(i0, input_map[parent0.name], parent0.cycle))
+            inputs.append(Input(i0, input_map[parent0.name], parent0.cycle + latency))
         else:
             for output in outputs:
                 if output.cycle == parent0.cycle + 2:
@@ -234,9 +255,14 @@ def gen_mul_input(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[L
                     break
 
         if parent1.name in input_map:
+            if 'mul' in parent1.name:
+                latency = 2
+            else:
+                latency = 1
+
             i1 = PRIMES[prime_idx]
             prime_idx += 1
-            inputs.append(Input(i1, input_map[parent1.name], parent1.cycle))
+            inputs.append(Input(i1, input_map[parent1.name], parent1.cycle + latency))
         else:
             for output in outputs:
                 if output.cycle == parent1.cycle + 2:
@@ -244,7 +270,7 @@ def gen_mul_input(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[L
                     break
 
         expected = i0 * i1
-        outputs.append(Output(expected, node.cycle + 2))
+        outputs.append(Output(expected, node.cycle + 1))
 
     inputs.sort()
     return inputs, outputs

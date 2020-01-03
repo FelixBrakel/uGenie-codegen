@@ -40,10 +40,11 @@ def main():
 
         try:
             assembler.compile(max_address, max_fu)
-            vhdl = control_signal_generator.insert_signals(assembler.export())
-            config = control_signal_generator.gen_config(assembler, max_address, max_fu, 3, label)
+            config = control_signal_generator.gen_config(assembler, max_address, max_fu, 1, label)
+            vhdl, tot_wait = control_signal_generator.insert_signals(assembler.export())
 
             with open('out/' + label + '.program', 'w') as f:
+                f.write('TOTAL_WAIT_NS ' + str(tot_wait) + '\n')
                 for line in config:
                     f.write(line + '\n')
                 f.write('\n')

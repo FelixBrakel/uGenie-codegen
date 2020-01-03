@@ -8,6 +8,7 @@
             r_LOAD_NEXT_INST => r_r_LOAD_NEXT_INST,
             r_INPUT_INST => r_r_INPUT_INST,
             r_RESET => r_r_RESET
+
                 );
 
     p_CLK_GEN: process is

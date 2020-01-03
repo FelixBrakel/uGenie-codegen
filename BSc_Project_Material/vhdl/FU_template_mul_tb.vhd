@@ -59,7 +59,7 @@ architecture behave of FU_template_mul_tb is
                 natural(ceil(log2(real(TOTAL_EXE_CYCLES+1))))+ -- bit required to ID Clock
                 natural(ceil(log2(real(INPUT_PORTS))))*3 + -- crossbar Select Bits
                 2 + -- Register Write enable bits (input 1 and input 2) 
-                natural(ceil(log2(real(RF_DEPTH)))) * 4 + -- RF select bits
+                natural(ceil(log2(real(RF_DEPTH+1)))) * 4 + -- RF select bits
                 4 -- Select signals for MuxA and MuxB
                 -1
                 downto 0);

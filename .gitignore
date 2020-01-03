@@ -135,11 +135,14 @@ fabric.properties
 #########
 #TCL - files
 #########
-!*.tcl
+*.tcl
 #########
 #Journal - files
 #########
-!*.jou
+*.jou
+*.log
+*.out
+*.program
 #########
 #Reports
 #########

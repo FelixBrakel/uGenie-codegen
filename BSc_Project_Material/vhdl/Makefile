@@ -1,6 +1,6 @@
 VHDL_SRC:= $(wildcard *.vhd)
 VHDL_SRC:= $(patsubst %, ../%,$(VHDL_SRC))
-TOP_LEVEL_DESIGN=FU_template_tb
+TOP_LEVEL_DESIGN=FU_template_mul_tb
 BUILD_DIR=build
 SIM_TIME="30"
 

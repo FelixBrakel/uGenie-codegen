@@ -4,18 +4,18 @@ use ieee.numeric_std.all;
 use IEEE.math_real."ceil";
 use IEEE.math_real."log2";
 
-entity FU_template_mul_tb is
-end FU_template_mul_tb;
+entity {FU} is
+end {FU};
 
-architecture behave of FU_template_mul_tb is
+architecture behave of {FU} is
     constant c_CLOCK_PERIOD : time := 50 ns;
     signal r_CLOCK: std_logic :='0';
-    signal r_i_FU : std_logic_vector((32*4)-1 downto 0);
-    signal w_o_FU : std_logic_vector((64*3)-1 downto 0);
+    signal r_i_FU : std_logic_vector((32*{PORTS})-1 downto 0);
+    signal w_o_FU : std_logic_vector((64*1)-1 downto 0);
     signal r_r_COMPUTING : std_logic := '0';
     signal r_r_LOAD_INST : std_logic := '0';
     signal r_r_LOAD_NEXT_INST : std_logic := '0';
-    signal r_r_INPUT_INST : std_logic_vector(35 downto 0);
+    signal r_r_INPUT_INST : std_logic_vector({I_SIZE} downto 0);
     signal r_r_RESET : std_logic :='0';
         --BEGIN DEBUG SIGNALS
     signal w_w_SEL_MUXA : std_logic_vector(1 downto 0);
@@ -59,7 +59,7 @@ architecture behave of FU_template_mul_tb is
                 natural(ceil(log2(real(TOTAL_EXE_CYCLES+1))))+ -- bit required to ID Clock
                 natural(ceil(log2(real(INPUT_PORTS))))*3 + -- crossbar Select Bits
                 2 + -- Register Write enable bits (input 1 and input 2)
-                natural(ceil(log2(real(RF_DEPTH)))) * 4 + -- RF select bits
+                natural(ceil(log2(real(RF_DEPTH+1)))) * 4 + -- RF select bits
                 4 -- Select signals for MuxA and MuxB
                 -1
                 downto 0);

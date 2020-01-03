@@ -24,7 +24,6 @@ class Assembler:
             else:
                 self.atmc.append(atmi)
 
-
     def print(self):
         output = '{:8} {:8} {:8} {:8} {:8} {:8} {:8} {:8} {:8} {:8} {:8} {:8}\n'.format('cycle',
                                                                                         'cbOut0',

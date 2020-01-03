@@ -25,13 +25,13 @@ class ATMI:
         RF = 2
 
     class MuxB(Enum):
-        FU = 0
-        RF = 1
-        OP = 2
+        OP = 0
+        FU = 1
+        RF = 2
 
-    def __init__(self, rf_depth: int, input_ports: int):
+    def __init__(self, rf_depth: int, max_port: int):
         self._rf_depth: int = rf_depth
-        self._input_ports: int = input_ports
+        self._max_port: int = max_port
         # self._total_exe_cycles: int = total_exe_cycles
         self.insts = {'Fetch': 0, 'Store': 0, 'Op': 0}
 
@@ -64,8 +64,8 @@ class ATMI:
 
     @cbOut0.setter
     def cbOut0(self, cbOut0: int):
-        if not 0 <= cbOut0 <= self._input_ports:
-            raise ValueOutOfRangeException('cbOut0: ' + str(cbOut0) + ', max: ' + str(self._input_ports))
+        if not 0 <= cbOut0 <= self._max_port:
+            raise ValueOutOfRangeException('cbOut0: ' + str(cbOut0) + ', max: ' + str(self._max_port))
         else:
             self._cbOut0 = cbOut0
 
@@ -75,8 +75,8 @@ class ATMI:
 
     @cbOut1.setter
     def cbOut1(self, cbOut1: int):
-        if not 0 <= cbOut1 <= self._input_ports:
-            raise ValueOutOfRangeException('cbOut1: ' + str(cbOut1) + ', max: ' + str(self._input_ports))
+        if not 0 <= cbOut1 <= self._max_port:
+            raise ValueOutOfRangeException('cbOut1: ' + str(cbOut1) + ', max: ' + str(self._max_port))
         else:
             self._cbOut1 = cbOut1
 
@@ -86,8 +86,8 @@ class ATMI:
 
     @cbOut2.setter
     def cbOut2(self, cbOut2: int):
-        if not 0 <= cbOut2 <= self._input_ports:
-            raise ValueOutOfRangeException('cbOut2: ' + str(cbOut2) + ', max: ' + str(self._input_ports))
+        if not 0 <= cbOut2 <= self._max_port:
+            raise ValueOutOfRangeException('cbOut2: ' + str(cbOut2) + ', max: ' + str(self._max_port))
         else:
             self._cbOut2 = cbOut2
 
@@ -272,13 +272,13 @@ class ATMI:
                                                                                                 r_reg1_s,
                                                                                                 w_reg0_s,
                                                                                                 w_reg1_s,
-                                                                                                muxa,
-                                                                                                muxb)
+                                                                                                muxb,
+                                                                                                muxa)
 
     def to_bitstring(self) -> str:
-        rf_bits = int(ceil(log2(self._rf_depth + 1)))
+        rf_bits = max(int(ceil(log2(self._rf_depth + 1))), 1)
         clock_bits = int(ceil(log2(self.max_cycle + 1)))
-        fu_bits = int(ceil(log2(self._input_ports + 1)))
+        fu_bits = int(ceil(log2(self._max_port + 1)))
 
         return '' \
                '{:0{clk}b}' \
@@ -303,8 +303,8 @@ class ATMI:
                          self._str_helper(self.r_reg1_s),
                          self._str_helper(self.w_reg0_s),
                          self._str_helper(self.w_reg1_s),
-                         self._str_helper(self.muxa),
                          self._str_helper(self.muxb),
+                         self._str_helper(self.muxa),
                          clk=clock_bits,
                          fu=fu_bits,
                          rf=rf_bits)
