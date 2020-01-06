@@ -173,3 +173,6 @@ vhdl_work_dir/build/*
 !vhdl_work_dir/FU_register_file.vhd
 !vhdl_work_dir/FU_template.vhd
 !vhdl_work_dir/Makefile
+
+BSc_Project_Material/*
+!BSc_Project_Material/vhdl
