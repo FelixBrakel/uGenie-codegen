@@ -157,14 +157,19 @@ fabric.properties
 !*.elf
 !*.bmm
 !*.xmp
+__pycache__/i
 __pycache__/
 
 # venv
 venv
 
 vhdl_work_dir/*
+!vhdl_work_dir/build/
+
+vhdl_work_dir/build/*
+!vhdl_work_dir/build/.gitkeep
+
 !vhdl_work_dir/FU_instruction_memory.vhd
 !vhdl_work_dir/FU_register_file.vhd
 !vhdl_work_dir/FU_template.vhd
 !vhdl_work_dir/Makefile
-!vhdl_work_dir/build/.gitkeep
