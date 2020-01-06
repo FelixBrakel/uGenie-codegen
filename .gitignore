@@ -46,7 +46,7 @@ cmake-build-*/
 *.iws
 
 # IntelliJ
-out/
+out/*
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -162,9 +162,8 @@ __pycache__/
 # venv
 venv
 
+vhdl_work_dir/*
 !vhdl_work_dir/FU_instruction_memory.vhd
 !vhdl_work_dir/FU_register_file.vhd
 !vhdl_work_dir/FU_template.vhd
 !vhdl_work_dir/Makefile
-!vhdl_work_dir/build
-vhdl_work_dir/*
