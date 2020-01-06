@@ -2,6 +2,7 @@ import glob
 import subprocess
 from sty import fg, bg, rs
 
+
 def main():
     # o = subprocess.run(['./compile_vhdl.sh'], capture_output=True)
     # print(o.stdout.decode())
@@ -27,6 +28,8 @@ def main():
             for line in f:
                 l = line.lstrip('0')
                 if 'XX' in l:
+                    l = None
+                    outputs.append(l)
                     continue
                 if l == '\n':
                     l = '0'
@@ -35,12 +38,18 @@ def main():
         passed = True
         if len(outputs) == len(expected):
             for i, val in enumerate(expected):
-                print('{} == {}? '.format(val, outputs[i]), end='')
-                if val != outputs[i]:
+                tmp = outputs[i]
+                if tmp != None:
+                    print('{} == {}? '.format(val, outputs[i]), end='')
+                    if val != outputs[i]:
+                        print(bg.da_red + 'FAIL' + rs.bg)
+                        passed = False
+                    else:
+                        print(bg.da_green + 'PASS' + rs.bg)
+                if tmp is None:
+                    print('{} == None? '.format(val), end='')
                     print(bg.da_red + 'FAIL' + rs.bg)
                     passed = False
-                else:
-                    print(bg.da_green + 'PASS' + rs.bg)
         else:
             print(bg.da_red + 'FAILED, not the same number of outpus as expected outputs!' + rs.bg)
             passed = False

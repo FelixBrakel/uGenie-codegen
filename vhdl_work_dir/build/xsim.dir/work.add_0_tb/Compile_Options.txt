@@ -1,1 +1,0 @@
-"add_0_tb" -debug "typical" 

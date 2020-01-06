@@ -1,1 +1,0 @@
-"mul_0_tb" -debug "typical" 

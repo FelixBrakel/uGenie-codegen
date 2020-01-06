@@ -1,0 +1,5 @@
+Reg_Address,Instruction
+0,(12) A[4]
+1,(44) A[14]
+2,(60) A[19]
+2,(13) B[4]

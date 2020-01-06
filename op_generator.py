@@ -39,7 +39,7 @@ def gen_op_insts(rf_allocs: List[RFallocation], dfg: AGraph, fu: AGraph, input_m
             if nodes[0] != nodes[1]:
                 raise DoubleUnidenticalOPInputException
 
-        # TODO: find shceduling for fetch ops might need to be swapped to fit?
+        # TODO: find scheduling for fetch ops might need to be swapped to fit?
         if input_type0 == RFInput:
             # If the data is in the RF we need to generate fetch instructions
             assembly.append(generate_fetch(rf_allocs, instruction, nodes[0], ATAFetch.REG.REG0))

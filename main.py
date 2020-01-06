@@ -13,8 +13,9 @@ from datatypes import RFallocation
 
 
 def main():
-    dfg = parser('dotfiles/Architecture_latency_146.dot')
-    simplified_dfg = parser('dotfiles/Architecture_latency_146_schematic.dot')
+    architecture = '148'
+    dfg = parser('dotfiles/Architecture_latency_{}.dot'.format(architecture))
+    simplified_dfg = parser('dotfiles/Architecture_latency_{}_schematic.dot'.format(architecture))
 
     fus: List[AGraph] = dfg.subgraphs()
 
@@ -32,7 +33,7 @@ def main():
             continue
 
         input_map, max_fu = input_mapper.map_input(fu, subgraphs, simplified_dfg)
-        rf_alloc_path = 'dotfiles/Architecture_latency_146_' + label + '_rf_allocation.csv'
+        rf_alloc_path = 'dotfiles/Architecture_latency_{}_'.format(architecture) + label + '_rf_allocation.csv'
         rf_allocs, max_address = rf_alloc_parser(rf_alloc_path)
 
         assembler.add_assembly(op_generator.gen_op_insts(rf_allocs, dfg, fu, input_map))
