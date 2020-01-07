@@ -10,10 +10,10 @@ from typing import List, Tuple
 from assembler import Assembler
 from atmi import ATMI, MergeException
 from datatypes import RFallocation
+import sys
 
-
-def main():
-    architecture = '148'
+def main(architecture):
+    # architecture = '148'
     dfg = parser('dotfiles/Architecture_latency_{}.dot'.format(architecture))
     simplified_dfg = parser('dotfiles/Architecture_latency_{}_schematic.dot'.format(architecture))
 
@@ -90,4 +90,5 @@ def parser(architecture_file_path: str) -> AGraph:
 
 
 if __name__ == '__main__':
-    main()
+    architecture = sys.argv[1]
+    main(architecture)

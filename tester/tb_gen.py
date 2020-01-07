@@ -3,7 +3,7 @@ from typing import List, Tuple, Dict
 from input_mapper import map_input
 from datatypes import Instruction, parse_instruction
 from math import ceil, log2
-import glob
+import glob, sys
 
 with open('../vhdl_template/FU_ADD_HEAD') as f:
     FU_ADD_HEAD = f.read()
@@ -118,8 +118,8 @@ def insert_inputs(inputs: List[Tuple[int, str]], end_cycle) -> str:
     return out
 
 
-def main():
-    architecture = '148'
+def main(architecture):
+    # architecture = '148'
     dfg = parser('../dotfiles/Architecture_latency_{}.dot'.format(architecture))
     simplified_dfg = parser('../dotfiles/Architecture_latency_{}_schematic.dot'.format(architecture))
     tot_cycles = 0
@@ -352,4 +352,4 @@ def parser(architecture_file_path: str) -> AGraph:
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1])

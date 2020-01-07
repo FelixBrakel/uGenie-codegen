@@ -25,4 +25,5 @@ clean:
 
 very_clean:
 	rm -f !("FU_instruction_memory.vhd"|"FU_register_file.vhd"|"FU_template.vhd"|"Makefile"|"build")
-	cd build; rm -rf *
+	cd build; rm -rf !(".gitkeep"); rm -rf .Xil
+	cd ../out; rm -rf *
