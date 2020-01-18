@@ -1,5 +1,6 @@
-from pygraphviz import AGraph
+from pygraphviz import AGraph, Node
 from typing import List, Tuple, Dict
+
 from input_mapper import map_input
 from datatypes import Instruction, parse_instruction
 from math import ceil, log2
@@ -37,7 +38,11 @@ class Output:
         self.cycle = cycle
 
     def __str__(self) -> str:
-        return '{},{}'.format(self.val, self.cycle)
+        tmp = self.val
+        if self.val is None:
+            tmp = 'BUGGED'
+
+        return '{},{}'.format(tmp, self.cycle)
 
 
 class Input:
@@ -166,11 +171,11 @@ def main(architecture):
         if 'add' in filename:
             head = FU_ADD_HEAD.format(FU=fu + '_tb', PORTS=str(Input.input_ports), I_SIZE=str(i_size))
             foot = FU_ADD_FOOT
-            call = gen_add_input
+            call = gen_add_inputs
         else:
             head = FU_MUL_HEAD.format(FU=fu + '_tb', PORTS=str(Input.input_ports), I_SIZE=str(i_size))
             foot = FU_MUL_FOOT
-            call = gen_mul_input
+            call = gen_mul_inputs
 
         vhdl_out = head + vhdl_body
 
@@ -188,7 +193,48 @@ def main(architecture):
                 file.write(str(out) + '\n')
 
 
-def gen_add_input(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[List[Input], List[Output]]:
+def gen_add_input(node: Instruction,
+                  parent: Instruction,
+                  input_map: Dict[str, int],
+                  inputs: List[Input],
+                  outputs: List[Output],
+                  exp: int,
+                  par_label: str) -> Tuple[int, bool]:
+    """
+    This function has side-effects. It can add a value to the 'inputs' list.
+    """
+    edge_case = False
+    i = 0
+
+    if 'mul' in par_label:
+        latency = 2
+    else:
+        latency = 1
+
+    if parent.cycle + latency == node.cycle - 1:
+        edge_case = True
+
+    if parent.name in input_map:
+        if 'mul' in par_label:
+            latency = 2
+        else:
+            latency = 1
+
+        i = 2 ** exp
+        inputs.append(Input(i, input_map[parent.name], parent.cycle + latency))
+
+    else:
+        for output in outputs:
+            if output.cycle == parent.cycle + 1:
+                i = output.val
+                if i is None:
+                    edge_case = True
+                break
+
+    return i, edge_case
+
+
+def gen_add_inputs(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[List[Input], List[Output]]:
     outputs: List[Output] = []
     inputs: List[Input] = []
     nodes: List[Instruction] = []
@@ -199,42 +245,52 @@ def gen_add_input(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[L
     exp = 0
     for node in nodes:
         preds = dfg.predecessors(node.name)
-        parent0 = parse_instruction(preds[0])
-        parent1 = parse_instruction(preds[1])
+        parent0: Instruction = parse_instruction(preds[0])
+        parent1: Instruction = parse_instruction(preds[1])
 
-        if parent0.name in input_map:
-            label = dfg.get_node(parent0.name).attr['label']
-            if 'mul' in label:
-                latency = 2
-            else:
-                latency = 1
+        label0 = dfg.get_node(parent0.name).attr['label']
+        label1 = dfg.get_node(parent1.name).attr['label']
 
-            i0 = 2**exp
-            inputs.append(Input(i0, input_map[parent0.name], parent0.cycle + latency))
+        i0, edge_case0 = gen_add_input(node, parent0, input_map, inputs, outputs, exp, label0)
+        i1, edge_case1 = gen_add_input(node, parent1, input_map, inputs, outputs, exp, label1)
+
+        if edge_case0 or edge_case1:
+            expected = None
         else:
-            for output in outputs:
-                if output.cycle == parent0.cycle + 1:
-                    i0 = output.val
-                    break
+            expected = i0 + i1
 
-        if parent1.name in input_map:
-            label = dfg.get_node(parent1.name).attr['label']
-            if 'mul' in label:
-                latency = 2
-            else:
-                latency = 1
-
-            i1 = 2**exp
-            inputs.append(Input(i1, input_map[parent1.name], parent1.cycle + latency))
-        else:
-            for output in outputs:
-                if output.cycle == parent1.cycle + 1:
-                    i1 = output.val
-                    break
+        # if parent0.name in input_map:
+        #     label = dfg.get_node(parent0.name).attr['label']
+        #     if 'mul' in label:
+        #         latency = 2
+        #     else:
+        #         latency = 1
+        #
+        #     i0 = 2**exp
+        #     inputs.append(Input(i0, input_map[parent0.name], parent0.cycle + latency))
+        # else:
+        #     for output in outputs:
+        #         if output.cycle == parent0.cycle + 1:
+        #             i0 = output.val
+        #             break
+        #
+        # if parent1.name in input_map:
+        #     label = dfg.get_node(parent1.name).attr['label']
+        #     if 'mul' in label:
+        #         latency = 2
+        #     else:
+        #         latency = 1
+        #
+        #     i1 = 2**exp
+        #     inputs.append(Input(i1, input_map[parent1.name], parent1.cycle + latency))
+        # else:
+        #     for output in outputs:
+        #         if output.cycle == parent1.cycle + 1:
+        #             i1 = output.val
+        #             break
 
         exp += 1
 
-        expected = i0 + i1
         outputs.append(Output(expected, node.cycle + 1))
 
     inputs.sort()
@@ -293,7 +349,47 @@ def gen_add_input2(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[
     return inputs, outputs
 
 
-def gen_mul_input(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[List[Input], List[Output]]:
+def gen_mul_input(node: Instruction,
+                  parent: Instruction,
+                  input_map: Dict[str, int],
+                  inputs: List[Input],
+                  outputs: List[Output],
+                  prime_idx: int,
+                  par_label: str) -> Tuple[int, bool, int]:
+    """
+    This function has side-effects. It can add a value to the 'inputs' list.
+    """
+    edge_case = False
+    i = 0
+    p = prime_idx
+
+    if 'mul' in par_label:
+        latency = 2
+    else:
+        latency = 1
+
+    if parent.cycle + latency == node.cycle - 1:
+        edge_case = True
+
+    if parent.name in input_map:
+        i = PRIMES[p]
+        p += 1
+        inputs.append(Input(i, input_map[parent.name], parent.cycle + latency))
+
+    else:
+        for output in outputs:
+            if output.cycle == parent.cycle + 2:
+                i = output.val
+
+                if i is None:
+                    edge_case = True
+
+                break
+
+    return i, edge_case, p
+
+
+def gen_mul_inputs(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[List[Input], List[Output]]:
     outputs: List[Output] = []
     inputs: List[Input] = []
     nodes: List[Instruction] = []
@@ -308,39 +404,50 @@ def gen_mul_input(dfg: AGraph, fu: AGraph, input_map: Dict[str, int]) -> Tuple[L
         parent0 = parse_instruction(preds[0])
         parent1 = parse_instruction(preds[1])
 
-        if parent0.name in input_map:
-            label = dfg.get_node(parent0.name).attr['label']
-            if 'mul' in label:
-                latency = 2
-            else:
-                latency = 1
+        label0 = dfg.get_node(parent0.name).attr['label']
+        label1 = dfg.get_node(parent1.name).attr['label']
 
-            i0 = PRIMES[prime_idx]
-            prime_idx += 1
-            inputs.append(Input(i0, input_map[parent0.name], parent0.cycle + latency))
+        i0, edge_case0, prime_idx = gen_mul_input(node, parent0, input_map, inputs, outputs, prime_idx, label0)
+        i1, edge_case1, prime_idx = gen_mul_input(node, parent1, input_map, inputs, outputs, prime_idx, label1)
+
+        if edge_case0 or edge_case1:
+            expected = None
         else:
-            for output in outputs:
-                if output.cycle == parent0.cycle + 2:
-                    i0 = output.val
-                    break
+            expected = i0 * i1
 
-        if parent1.name in input_map:
-            label = dfg.get_node(parent1.name).attr['label']
-            if 'mul' in label:
-                latency = 2
-            else:
-                latency = 1
+        # if parent0.name in input_map:
+        #     label = dfg.get_node(parent0.name).attr['label']
+        #     if 'mul' in label:
+        #         latency = 2
+        #     else:
+        #         latency = 1
+        #
+        #     i0 = PRIMES[prime_idx]
+        #     prime_idx += 1
+        #     inputs.append(Input(i0, input_map[parent0.name], parent0.cycle + latency))
+        # else:
+        #     for output in outputs:
+        #         if output.cycle == parent0.cycle + 2:
+        #             i0 = output.val
+        #             break
+        #
+        # if parent1.name in input_map:
+        #     label = dfg.get_node(parent1.name).attr['label']
+        #     if 'mul' in label:
+        #         latency = 2
+        #     else:
+        #         latency = 1
+        #
+        #     i1 = PRIMES[prime_idx]
+        #     prime_idx += 1
+        #     inputs.append(Input(i1, input_map[parent1.name], parent1.cycle + latency))
+        # else:
+        #     for output in outputs:
+        #         if output.cycle == parent1.cycle + 2:
+        #             i1 = output.val
+        #             break
 
-            i1 = PRIMES[prime_idx]
-            prime_idx += 1
-            inputs.append(Input(i1, input_map[parent1.name], parent1.cycle + latency))
-        else:
-            for output in outputs:
-                if output.cycle == parent1.cycle + 2:
-                    i1 = output.val
-                    break
-
-        expected = i0 * i1
+        # expected = i0 * i1
         outputs.append(Output(expected, node.cycle + 1))
 
     inputs.sort()
