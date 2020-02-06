@@ -1,5 +1,5 @@
 #!/bin/bash
-source venv/bin/activate
+#source venv/bin/activate
 export PYTHONPATH="$PWD"
 echo "PYTHONPATH: $PYTHONPATH"
 echo "" > test_output.txt
